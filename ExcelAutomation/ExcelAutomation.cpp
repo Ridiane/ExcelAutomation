@@ -3,7 +3,6 @@
 // ------------------------------------------------------------------------------------------------
 
 #include "stdafx.h"
-//#include <Ole2.h>
 #include "Oleexcelapi.h"
 
 int main()
@@ -37,8 +36,8 @@ int main()
 		for (int j = 1; j <= 15; j++)
 		{
 			VARIANT tmp;
-			tmp.vt = VT_I4;
-			tmp.lVal = i*j;
+			tmp.vt = VT_BSTR;
+			tmp.bstrVal = SysAllocString(L"Ceci est un test");
 			long indices[] = { i, j };
 			SafeArrayPutElement(arr.parray, indices, (void *)&tmp);
 		}
@@ -46,7 +45,7 @@ int main()
 
 	// Fill the workbook with theses data
 	IDispatch *pXLSheet = sheet.GetActiveSheet(pXLApp);
-	IDispatch *pXLRange = sheet.GetRange(L"A1:O15", pXLSheet);
+	IDispatch *pXLRange = sheet.GetRange(L"A2:O16", pXLSheet);
 	sheet.SetValueInRange(arr, pXLRange);
 
 	// Wait for user to see the result...

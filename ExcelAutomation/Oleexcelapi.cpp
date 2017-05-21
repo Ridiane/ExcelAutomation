@@ -12,6 +12,9 @@ Oleexcelapi::~Oleexcelapi()
 {
 }
 
+// --< CreateNewInstance : >-----------------------------------------------------------------------
+// Create a new Excel instance and get his ID
+// out > pXLApp (IDispatch) = Excel instance's ID
 HRESULT Oleexcelapi::CreateNewInstance(IDispatch **pXLApp)
 {
 	// Get CLSID
@@ -24,7 +27,12 @@ HRESULT Oleexcelapi::CreateNewInstance(IDispatch **pXLApp)
 	hr = CoCreateInstance(clsid, NULL, CLSCTX_LOCAL_SERVER, IID_IDispatch, (void**)pXLApp);
 	return hr;
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< SetVisible : >------------------------------------------------------------------------------
+// Make the Excel instance passed in argument visible or invisible.
+// in > pXLApp (IDispatch) = Excel instance
+// in > arg (int) = 1 = visible / 0 = invisible
 void Oleexcelapi::SetVisible(IDispatch *pXLApp, int arg)
 {
 	VARIANT result;
@@ -32,7 +40,11 @@ void Oleexcelapi::SetVisible(IDispatch *pXLApp, int arg)
 	result.lVal = 1;
 	AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLApp, L"Visible", arg, result);
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< GetAllWorkbooks : >-------------------------------------------------------------------------
+// Return all the workbooks in the Excel instance passed in argument.
+// in > pXLApp (IDispatch) = Excel instance
 IDispatch* Oleexcelapi::GetAllWorkbooks(IDispatch *pXLApp)
 {
 	VARIANT result;
@@ -40,7 +52,11 @@ IDispatch* Oleexcelapi::GetAllWorkbooks(IDispatch *pXLApp)
 	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLApp, L"Workbooks", 0);
 	return result.pdispVal;
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< AddWorkbook : >-----------------------------------------------------------------------------
+// Add a workbook into the passed workbooks collection, then return it's ID.
+// in > pXLWorbooks (IDispatch) = Targeted Excel instance's workbooks collection
 IDispatch* Oleexcelapi::AddWorkbook(IDispatch *pXLWorkbooks)
 {
 	VARIANT result;
@@ -48,7 +64,11 @@ IDispatch* Oleexcelapi::AddWorkbook(IDispatch *pXLWorkbooks)
 	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLWorkbooks, L"Add", 0);
 	return result.pdispVal;
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< GetActiveSheet : >--------------------------------------------------------------------------
+// Return the current active sheet in the targeted Excel instance.
+// in > pXLApp (IDispatch) = Excel instance
 IDispatch* Oleexcelapi::GetActiveSheet(IDispatch * pXLApp)
 {
 	VARIANT result;
@@ -56,12 +76,21 @@ IDispatch* Oleexcelapi::GetActiveSheet(IDispatch * pXLApp)
 	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLApp, L"ActiveSheet", 0);
 	return result.pdispVal;
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< CloseInstance : >---------------------------------------------------------------------------
+// Close the passed in argument Excel instance.
+// in > pXLApp (IDispatch) = Excel instance
 void Oleexcelapi::CloseInstance(IDispatch *pXLApp)
 {
 	AutoWrap(DISPATCH_METHOD, NULL, pXLApp, L"Quit", 0);
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< GetRange : >--------------------------------------------------------------------------------
+// Return the ID of the specified range in the given sheet.
+// in > range (LPOLESTR) = range to be return in excel format (i.e : "A1:B2")
+// in > pxLSheet (IDispatch) = Targeted Excel sheet
 IDispatch* Oleexcelapi::GetRange(LPOLESTR range, IDispatch *pXLSheet)
 {
 	VARIANT parm;
@@ -75,11 +104,17 @@ IDispatch* Oleexcelapi::GetRange(LPOLESTR range, IDispatch *pXLSheet)
 
 	return result.pdispVal;
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
+// --< SetValueInRange : >-------------------------------------------------------------------------
+// Set the given safearrays values in the given cells range.
+// in > val (VARIANT) = safearray containing the desired values. Must be set to VT_ARRAY | VT_VARIANT
+// in > pXLRange (IDispatch) = Targeted cells range
 void Oleexcelapi::SetValueInRange(VARIANT val, IDispatch *pXLRange)
 {
 	AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLRange, L"Value", 1, val);
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
 ////// PRIVATE ////////////////////////////////////////////////////////////////////////////////////
 
