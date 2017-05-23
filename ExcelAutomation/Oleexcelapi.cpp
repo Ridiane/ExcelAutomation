@@ -17,7 +17,7 @@ Oleexcelapi::~Oleexcelapi()
 // out > pXLApp (IDispatch) = Excel instance's ID
 HRESULT Oleexcelapi::CreateNewInstance(IDispatch **pXLApp)
 {
-	// Get CLSID
+	// Get CLSID from registry
 	CLSID clsid;
 	HRESULT hr = CLSIDFromProgID(L"Excel.Application", &clsid);
 	if (FAILED(hr))
@@ -29,6 +29,42 @@ HRESULT Oleexcelapi::CreateNewInstance(IDispatch **pXLApp)
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
+// --< GetActiveInstance : >-----------------------------------------------------------------------
+// Return an IDispatch interface to a running Excel instance
+IDispatch* Oleexcelapi::GetActiveInstance()
+{
+	// Get CLSID from registry
+	CLSID clsid;
+	HRESULT hr = CLSIDFromProgID(L"Excel.Application", &clsid);
+	
+	if (FAILED(hr))
+	{
+		// TODO
+	}
+
+	// Get an interface to the running instance, if there is one...
+	IUnknown * pUnk;
+	hr = GetActiveObject(clsid, NULL, (IUnknown**)&pUnk);
+
+	if (FAILED(hr))
+	{
+		// TODO
+	}
+
+	// Get the IDispatch for Automation
+	IDispatch * pDisp;
+	hr = pUnk->QueryInterface(IID_IDispatch, (void**)&pDisp);
+
+	if (FAILED(hr))
+	{
+		// TODO
+	}
+
+	pUnk->Release();
+	return pDisp;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
 // --< SetVisible : >------------------------------------------------------------------------------
 // Make the Excel instance passed in argument visible or invisible.
 // in > pXLApp (IDispatch) = Excel instance
@@ -37,8 +73,8 @@ void Oleexcelapi::SetVisible(IDispatch *pXLApp, int arg)
 {
 	VARIANT result;
 	result.vt = VT_I4;
-	result.lVal = 1;
-	AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLApp, L"Visible", arg, result);
+	result.lVal = arg;
+	AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLApp, L"Visible", 1, result);
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
@@ -115,6 +151,12 @@ void Oleexcelapi::SetValueInRange(VARIANT val, IDispatch *pXLRange)
 	AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLRange, L"Value", 1, val);
 }
 // -----------------------------------------------------------------------------------------< ! >--
+
+// --< GetValue : >--------------------------------------------------------------------------------
+LPOLESTR Oleexcelapi::GetValue(IDispatch *pXLRange)
+{
+	return NULL;
+}
 
 ////// PRIVATE ////////////////////////////////////////////////////////////////////////////////////
 

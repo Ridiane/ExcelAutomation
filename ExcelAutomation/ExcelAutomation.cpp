@@ -11,10 +11,8 @@ int main()
 	CoInitialize(NULL);
 	Oleexcelapi sheet;
 
-	// Start a new excel instance and get it
-	IDispatch *pXLApp;
-	sheet.CreateNewInstance(&pXLApp);
-	sheet.SetVisible(pXLApp, 1);
+	// Get a running Excel instance
+	IDispatch *pXLApp =	sheet.GetActiveInstance();
 
 	// Add a new workbook
 	IDispatch *pXLWorkbooks = sheet.GetAllWorkbooks(pXLApp);
@@ -50,6 +48,10 @@ int main()
 
 	// Wait for user to see the result...
 	MessageBox(NULL, L"All Done.", L"Notice", 0x10000);
+
+	IDispatch *pXLRange2 = sheet.GetRange(L"A4:A4", pXLSheet);
+
+	MessageBox(NULL, sheet.GetValue(pXLRange2), L"Getting A4", 0x10000);
 
 	// Close 
 	sheet.CloseInstance(pXLApp);

@@ -4,6 +4,7 @@
 class Oleexcelapi
 {
 public:
+
 	Oleexcelapi();		// Constructor
 	~Oleexcelapi();		// Deconstructor
 
@@ -11,6 +12,10 @@ public:
 	// Create a new Excel instance and get his ID
 	// out > pXLApp (IDispatch) = Excel instance's ID
 	HRESULT CreateNewInstance(IDispatch **pXLApp);
+
+	// --< GetActiveInstance : >-------------------------------------------------------------------
+	// Return an IDispatch interface to a running Excel instance
+	IDispatch* GetActiveInstance();
 
 	// --< SetVisible : >--------------------------------------------------------------------------
 	// Make the Excel instance passed in argument visible or invisible.
@@ -49,6 +54,9 @@ public:
 	// in > val (VARIANT) = safearray containing the desired values. Must be set to VT_ARRAY | VT_VARIANT
 	// in > pXLRange (IDispatch) = Targeted cells range
 	void SetValueInRange(VARIANT val, IDispatch *pXLRange);
+
+	LPOLESTR GetValue(IDispatch *pXLRange);
+
 
 private:
 
