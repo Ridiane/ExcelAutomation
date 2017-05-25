@@ -153,10 +153,22 @@ void Oleexcelapi::SetValueInRange(VARIANT val, IDispatch *pXLRange)
 // -----------------------------------------------------------------------------------------< ! >--
 
 // --< GetValue : >--------------------------------------------------------------------------------
+// Return the value stored in cells in the given range.
+// in > pXPLRange (IDispatch) = Targeted cells range
+// out < (LPOLESTR) = Content of the cell
+// TODO : 
+//	> Adptative to any types of content in the cell
+//  > Array of cells values instead of only one cell
 LPOLESTR Oleexcelapi::GetValue(IDispatch *pXLRange)
 {
-	return NULL;
+	VARIANT result;
+	VariantInit(&result);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLRange, L"Value", 0);
+	LPOLESTR val = result.bstrVal;
+	VariantClear(&result);
+	return val;
 }
+// -----------------------------------------------------------------------------------------< ! >--
 
 ////// PRIVATE ////////////////////////////////////////////////////////////////////////////////////
 

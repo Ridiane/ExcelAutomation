@@ -12,7 +12,9 @@ int main()
 	Oleexcelapi sheet;
 
 	// Get a running Excel instance
-	IDispatch *pXLApp =	sheet.GetActiveInstance();
+	IDispatch *pXLApp;
+	sheet.CreateNewInstance(&pXLApp);
+	sheet.SetVisible(pXLApp, 1);
 
 	// Add a new workbook
 	IDispatch *pXLWorkbooks = sheet.GetAllWorkbooks(pXLApp);
@@ -34,8 +36,9 @@ int main()
 		for (int j = 1; j <= 15; j++)
 		{
 			VARIANT tmp;
-			tmp.vt = VT_BSTR;
-			tmp.bstrVal = SysAllocString(L"Ceci est un test");
+			tmp.vt = VT_I4;
+			tmp.lVal = i*j;
+			// tmp.bstrVal = SysAllocString(L"Ceci est un test");
 			long indices[] = { i, j };
 			SafeArrayPutElement(arr.parray, indices, (void *)&tmp);
 		}
@@ -49,12 +52,12 @@ int main()
 	// Wait for user to see the result...
 	MessageBox(NULL, L"All Done.", L"Notice", 0x10000);
 
-	IDispatch *pXLRange2 = sheet.GetRange(L"A4:A4", pXLSheet);
-
+	// Get value stored A4 cell
+	IDispatch *pXLRange2 = sheet.GetRange(L"A4:B1", pXLSheet);
 	MessageBox(NULL, sheet.GetValue(pXLRange2), L"Getting A4", 0x10000);
 
 	// Close 
-	sheet.CloseInstance(pXLApp);
+	// sheet.CloseInstance(pXLApp);
 
 	pXLApp->Release();
 	pXLWorkbooks->Release();
