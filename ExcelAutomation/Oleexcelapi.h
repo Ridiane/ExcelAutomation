@@ -17,6 +17,11 @@ public:
 	// Return an IDispatch interface to a running Excel instance
 	IDispatch* GetActiveInstance();
 
+	// --< CloseInstance : >-----------------------------------------------------------------------
+	// Close the passed in argument Excel instance.
+	// in > pXLApp (IDispatch) = Excel instance
+	void CloseInstance(IDispatch *pXLApp);
+
 	// --< SetVisible : >--------------------------------------------------------------------------
 	// Make the Excel instance passed in argument visible or invisible.
 	// in > pXLApp (IDispatch) = Excel instance
@@ -33,15 +38,22 @@ public:
 	// in > pXLWorbooks (IDispatch) = Targeted Excel instance's workbooks collection
 	IDispatch* AddWorkbook(IDispatch *pXLWorkbooks);
 
+	// --< GetActiveWorkbook >-------------------------------------------------------------------------
+	IDispatch* GetActiveWorkbook(IDispatch *pXLApp);
+
 	// --< GetActiveSheet : >----------------------------------------------------------------------
 	// Return the current active sheet in the targeted Excel instance.
 	// in > pXLApp (IDispatch) = Excel instance
 	IDispatch* GetActiveSheet(IDispatch *pXLApp);
 
-	// --< CloseInstance : >-----------------------------------------------------------------------
-	// Close the passed in argument Excel instance.
+	// --< GetActiveSheet : >--------------------------------------------------------------------------
+	// Return the sheet with the name given in the targeted Excel instance.
 	// in > pXLApp (IDispatch) = Excel instance
-	void CloseInstance(IDispatch *pXLApp);
+	// in > name (LPOLESTR) = Name of the targeted sheet as it appears in excel
+	IDispatch* GetSheetByName(IDispatch * pXLBook, LPOLESTR name);
+
+	// --< SetSheetName : >----------------------------------------------------------------------------
+	HRESULT SetSheetName(IDispatch* pXLSheet, LPOLESTR name);
 
 	// --< GetRange : >----------------------------------------------------------------------------
 	// Return the ID of the specified range in the given sheet.
@@ -61,16 +73,12 @@ public:
 	// out < (LPOLESTR) = Content of the cell
 	// TODO : 
 	//	> Adptative to any types of content in the cell
-	//  > Array of cells values instead of only one cell
-	LPOLESTR GetValue(IDispatch *pXLRange);
+	VARIANT GetValue(IDispatch *pXLRange);
 
 private:
 
 	// --< AutoWrap : >---------------------------------------------------------------------------- 
 	// Simplifies the code by encapsulating low-level details involved in using IDispatch directly
 	HRESULT AutoWrap(int autoType, VARIANT *pvResult, IDispatch *pDisp, LPOLESTR ptName, int argc...);
-
-protected:
-
 };
 

@@ -40,6 +40,7 @@ IDispatch* Oleexcelapi::GetActiveInstance()
 	if (FAILED(hr))
 	{
 		// TODO
+		return NULL;
 	}
 
 	// Get an interface to the running instance, if there is one...
@@ -49,6 +50,7 @@ IDispatch* Oleexcelapi::GetActiveInstance()
 	if (FAILED(hr))
 	{
 		// TODO
+		return NULL;
 	}
 
 	// Get the IDispatch for Automation
@@ -58,10 +60,20 @@ IDispatch* Oleexcelapi::GetActiveInstance()
 	if (FAILED(hr))
 	{
 		// TODO
+		return NULL;
 	}
 
 	pUnk->Release();
 	return pDisp;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
+// --< CloseInstance : >---------------------------------------------------------------------------
+// Close the passed in argument Excel instance.
+// in > pXLApp (IDispatch) = Excel instance
+void Oleexcelapi::CloseInstance(IDispatch *pXLApp)
+{
+	AutoWrap(DISPATCH_METHOD, NULL, pXLApp, L"Quit", 0);
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
@@ -102,6 +114,16 @@ IDispatch* Oleexcelapi::AddWorkbook(IDispatch *pXLWorkbooks)
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
+// --< GetActiveWorkbook >-------------------------------------------------------------------------
+IDispatch* Oleexcelapi::GetActiveWorkbook(IDispatch *pXLApp)
+{
+	VARIANT result;
+	VariantInit(&result);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLApp, L"ActiveWorkbook", 0);
+	return result.pdispVal;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
 // --< GetActiveSheet : >--------------------------------------------------------------------------
 // Return the current active sheet in the targeted Excel instance.
 // in > pXLApp (IDispatch) = Excel instance
@@ -114,12 +136,34 @@ IDispatch* Oleexcelapi::GetActiveSheet(IDispatch * pXLApp)
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
-// --< CloseInstance : >---------------------------------------------------------------------------
-// Close the passed in argument Excel instance.
+// --< GetActiveSheet : >--------------------------------------------------------------------------
+// Return the sheet with the name given in the targeted Excel instance.
 // in > pXLApp (IDispatch) = Excel instance
-void Oleexcelapi::CloseInstance(IDispatch *pXLApp)
+// in > name (LPOLESTR) = Name of the targeted sheet as it appears in excel
+IDispatch* Oleexcelapi::GetSheetByName(IDispatch * pXLBook, LPOLESTR name)
 {
-	AutoWrap(DISPATCH_METHOD, NULL, pXLApp, L"Quit", 0);
+	// Convert range from LPOLESTR to VARIANT to be used as parameters
+	VARIANT parm;
+	parm.vt = VT_BSTR;
+	parm.bstrVal = SysAllocString(name);
+
+	VARIANT result;
+	VariantInit(&result);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLBook, L"Sheets", 1, parm);
+	return result.pdispVal;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
+// --< SetSheetName : >----------------------------------------------------------------------------
+HRESULT Oleexcelapi::SetSheetName(IDispatch* pXLSheet, LPOLESTR name)
+{
+	// Convert range from LPOLESTR to VARIANT to be used as parameters
+	VARIANT parm;
+	parm.vt = VT_BSTR;
+	parm.bstrVal = SysAllocString(name);
+
+	HRESULT hr = AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLSheet, L"Name", 1, parm);
+	return hr;
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
@@ -129,6 +173,7 @@ void Oleexcelapi::CloseInstance(IDispatch *pXLApp)
 // in > pxLSheet (IDispatch) = Targeted Excel sheet
 IDispatch* Oleexcelapi::GetRange(LPOLESTR range, IDispatch *pXLSheet)
 {
+	// Convert range from LPOLESTR to VARIANT to be used as parameters
 	VARIANT parm;
 	parm.vt = VT_BSTR;
 	parm.bstrVal = SysAllocString(range);
@@ -159,14 +204,12 @@ void Oleexcelapi::SetValueInRange(VARIANT val, IDispatch *pXLRange)
 // TODO : 
 //	> Adptative to any types of content in the cell
 //  > Array of cells values instead of only one cell
-LPOLESTR Oleexcelapi::GetValue(IDispatch *pXLRange)
+VARIANT Oleexcelapi::GetValue(IDispatch *pXLRange)
 {
 	VARIANT result;
 	VariantInit(&result);
 	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLRange, L"Value", 0);
-	LPOLESTR val = result.bstrVal;
-	VariantClear(&result);
-	return val;
+	return result;
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
