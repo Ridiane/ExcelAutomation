@@ -124,6 +124,16 @@ IDispatch* Oleexcelapi::GetActiveWorkbook(IDispatch *pXLApp)
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
+// --< GetAllSheet : >-----------------------------------------------------------------------------
+IDispatch* Oleexcelapi::GetAllSheets(IDispatch * pXLApp)
+{
+	VARIANT result;
+	VariantInit(&result);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLApp, L"Sheets", 0);
+	return result.pdispVal;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
 // --< GetActiveSheet : >--------------------------------------------------------------------------
 // Return the current active sheet in the targeted Excel instance.
 // in > pXLApp (IDispatch) = Excel instance
@@ -136,7 +146,7 @@ IDispatch* Oleexcelapi::GetActiveSheet(IDispatch * pXLApp)
 }
 // -----------------------------------------------------------------------------------------< ! >--
 
-// --< GetActiveSheet : >--------------------------------------------------------------------------
+// --< GetSheetByName : >--------------------------------------------------------------------------
 // Return the sheet with the name given in the targeted Excel instance.
 // in > pXLApp (IDispatch) = Excel instance
 // in > name (LPOLESTR) = Name of the targeted sheet as it appears in excel
@@ -150,6 +160,16 @@ IDispatch* Oleexcelapi::GetSheetByName(IDispatch * pXLBook, LPOLESTR name)
 	VARIANT result;
 	VariantInit(&result);
 	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLBook, L"Sheets", 1, parm);
+	return result.pdispVal;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
+// --< AddSheet : >--------------------------------------------------------------------------------
+IDispatch* Oleexcelapi::AddSheet(IDispatch* pXLSheet)
+{
+	VARIANT result;
+	VariantInit(&result);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLSheet, L"Add", 0);
 	return result.pdispVal;
 }
 // -----------------------------------------------------------------------------------------< ! >--

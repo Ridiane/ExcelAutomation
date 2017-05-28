@@ -69,8 +69,10 @@ int main()
 	VARIANT cell = sheet.GetValue(pXLRange_2);
 	if (cell.parray != NULL)
 	{
-		IDispatch *pXLSheet_2 = sheet.GetSheetByName(pXLBook, L"Result");
-		IDispatch *pXLRange_3 = sheet.GetRange(L"A1:O7", pXLSheet_2);
+		IDispatch *pXLSheets = sheet.GetAllSheets(pXLApp);
+		IDispatch *pXLNewSheet = sheet.AddSheet(pXLSheets);
+		sheet.SetSheetName(pXLNewSheet, L"Result");
+		IDispatch *pXLRange_3 = sheet.GetRange(L"A1:O7", pXLNewSheet);
 		sheet.SetValueInRange(cell, pXLRange_3);
 
 		MessageBox(NULL, L"All Done.", L"Notice", 0x10000);
