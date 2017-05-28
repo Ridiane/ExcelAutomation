@@ -56,7 +56,10 @@ public:
 	IDispatch* GetSheetByName(IDispatch * pXLBook, LPOLESTR name);
 
 	// --< AddSheet : >-------------------------------------------------------------------------------
-	IDispatch* AddSheet(IDispatch* pXLBook);
+	// Add a new sheet to the given pool of sheets, then return an interface to it.
+	// In > pXLSheets (IDispatch) = targeted pool of sheets
+	// Out < IDispatch pointer = Interface to the newly added sheet
+	IDispatch* AddSheet(IDispatch* pXLSheets);
 
 	// --< SetSheetName : >---------------------------------------------------------------------------
 	HRESULT SetSheetName(IDispatch* pXLSheet, LPOLESTR name);
@@ -80,6 +83,13 @@ public:
 	// TODO : 
 	//	> Adptative to any types of content in the cell
 	VARIANT GetValue(IDispatch *pXLRange);
+
+	// --< SetRangeColor : >--------------------------------------------------------------------------
+	// Set the value of the color property in the given range.
+	// in > pXLRange (IDispatch) = Targeted cells range
+	// in > red, green, blue (int) = RGB code of the desired color
+	// out < HRESULT = Success or error code
+	HRESULT SetRangeColor(IDispatch *pXLRange, int red, int green, int blue);
 
 private:
 

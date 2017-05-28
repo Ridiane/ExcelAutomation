@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Oleexcelapi.h"
-#include <stdio.h>
 
 ////// PUBLIC /////////////////////////////////////////////////////////////////////////////////////
 
@@ -165,11 +164,14 @@ IDispatch* Oleexcelapi::GetSheetByName(IDispatch * pXLBook, LPOLESTR name)
 // -----------------------------------------------------------------------------------------< ! >--
 
 // --< AddSheet : >--------------------------------------------------------------------------------
-IDispatch* Oleexcelapi::AddSheet(IDispatch* pXLSheet)
+// Add a new sheet to the given pool of sheets, then return an interface to it.
+// In > pXLSheets (IDispatch) = targeted pool of sheets
+// Out < IDispatch pointer = Interface to the newly added sheet
+IDispatch* Oleexcelapi::AddSheet(IDispatch* pXLSheets)
 {
 	VARIANT result;
 	VariantInit(&result);
-	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLSheet, L"Add", 0);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLSheets, L"Add", 0);
 	return result.pdispVal;
 }
 // -----------------------------------------------------------------------------------------< ! >--
@@ -230,6 +232,29 @@ VARIANT Oleexcelapi::GetValue(IDispatch *pXLRange)
 	VariantInit(&result);
 	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLRange, L"Value", 0);
 	return result;
+}
+// -----------------------------------------------------------------------------------------< ! >--
+
+// --< SetRangeColor : >---------------------------------------------------------------------------
+// Set the value of the color property in the given range.
+// in > pXLRange (IDispatch) = Targeted cells range
+// in > red, green, blue (int) = RGB code of the desired color
+// out < HRESULT = Success or error code
+HRESULT Oleexcelapi::SetRangeColor(IDispatch *pXLRange, int red, int green, int blue)
+{
+	// Get the Interior object (https://msdn.microsoft.com/en-us/library/office/ff196598.aspx) from the targeted range
+	VARIANT result;
+	VariantInit(&result);
+	AutoWrap(DISPATCH_PROPERTYGET, &result, pXLRange, L"Interior", 0);
+	IDispatch *pXLInterior = result.pdispVal;
+
+	// Convert colors arguments to a color value then store it as a Variant(int)
+	VARIANT vRGB;
+	vRGB.vt = VT_I4;
+	vRGB.lVal = RGB(red, green, blue);
+
+	HRESULT hr = AutoWrap(DISPATCH_PROPERTYPUT, NULL, pXLInterior, L"Color", 1, vRGB);
+	return hr;
 }
 // -----------------------------------------------------------------------------------------< ! >--
 

@@ -65,15 +65,16 @@ int main()
 	MessageBox(NULL, L"All Done.", L"Notice", 0x10000);
 
 	// Get value stored A4 cell
-	IDispatch *pXLRange_2 = sheet.GetRange(L"A2:O8", pXLSheet);
+	IDispatch *pXLRange_2 = sheet.GetRange(L"A2:B4", pXLSheet);
 	VARIANT cell = sheet.GetValue(pXLRange_2);
 	if (cell.parray != NULL)
 	{
 		IDispatch *pXLSheets = sheet.GetAllSheets(pXLApp);
 		IDispatch *pXLNewSheet = sheet.AddSheet(pXLSheets);
 		sheet.SetSheetName(pXLNewSheet, L"Result");
-		IDispatch *pXLRange_3 = sheet.GetRange(L"A1:O7", pXLNewSheet);
+		IDispatch *pXLRange_3 = sheet.GetRange(L"A1:B3", pXLNewSheet);
 		sheet.SetValueInRange(cell, pXLRange_3);
+		sheet.SetRangeColor(pXLRange_3, 255, 192, 0);
 
 		MessageBox(NULL, L"All Done.", L"Notice", 0x10000);
 	}
